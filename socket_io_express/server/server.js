@@ -21,7 +21,7 @@
 //   console.log(`User ${socket.id} connected`);
 
 //   // Single client/user that connects
-//   socket.emit("message");
+//   socket.emit("message", "Welcome to the chat app!");
 
 //   // All connected clients/users except the one that connects
 //   socket.broadcast.emit(
@@ -70,10 +70,10 @@ const io = new Server(httpServer)
 io.on("connection", socket => {
   console.log(`User ${socket.id} connected`);
 
-  // Single client/user that connects
-  socket.emit("message");
+  // Emit or send a message to only the client/user that connects
+  socket.emit("message", "Welcome to the chat app!");
 
-  // All connected clients/users except the one that connects
+  // Send to all connected clients/users except the one that connects
   socket.broadcast.emit("message", `${socket.id.substring(0, 5)}: joined the chat`);
 
   // Listening for a message event
@@ -89,8 +89,9 @@ io.on("connection", socket => {
     socket.broadcast.emit("message", `${socket.id.substring(0, 5)}: left the chat`);
   });
 
-  // Listen for activity
+  // Listen for an activity event
   socket.on("activity", name => {
+    // Broadcast the activity to all connected clients/users except the one that sent it
     socket.broadcast.emit("activity", name);
   });
 })
