@@ -6,9 +6,10 @@ const activity = document.querySelector(".activity");
 const userList = document.querySelector(".user-list");
 const roomList = document.querySelector(".room-list");
 const chatDisplay = document.querySelector(".chat-display");
-const message = msgInput.value;
-const name = nameInput.value;
-const room = chatRoom.value;
+const message = msgInput?.value;
+const name = nameInput?.value;
+const room = chatRoom?.value;
+
 const sendMessage = (e) => {
   e.preventDefault();
 
@@ -16,8 +17,8 @@ const sendMessage = (e) => {
 
   if (message && name && room) {
     socket.emit("message", {
-      text: message,
-      name: name,
+      "text": message,
+      "name": name,
     });
     msgInput.value = "";
   }

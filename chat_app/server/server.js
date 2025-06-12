@@ -33,6 +33,8 @@ io.on("connection", (socket) => {
   socket.emit("message", buildMsg(ADMIN, "Welcome to Chat App"));
 
   socket.on("joinRoom", ({ room, name }) => {
+    // To ensure that the user isn't already in a room,
+    // we first check if the user has a previous room
     const prevRoom = getUser(socket.id)?.room;
     if (prevRoom) {
       socket.leave(prevRoom);
@@ -89,7 +91,7 @@ io.on("connection", (socket) => {
   });
 
   // Listening for a message event
-  socket.on("message", ({name, text}) => {
+  socket.on("message", ({ name, text }) => {
     const room = getUser(socket.id)?.room;
     if (room) {
       io.to(room).emit("message", buildMsg(name, text));
@@ -106,6 +108,7 @@ httpServer.listen(3500, () => {
   console.log("Server is running on port " + 3500);
 });
 
+// Helper function to build a message object
 const buildMsg = (name, text) => {
   return {
     name,
@@ -118,7 +121,7 @@ const buildMsg = (name, text) => {
   };
 };
 
-// User functions
+// Helper functions to manage users and rooms
 const activateUser = (name, id, room) => {
   const user = { name, id, room };
   UsersState.setUsers([
@@ -141,5 +144,8 @@ const getUsersInRoom = (room) => {
 };
 
 const getAllActiveRooms = () => {
-  return [...new Set(UsersState.users.map((user) => user.room))];
+  // return [...new Set(UsersState.users.map((user) => user?.room))];
+  return Array.from(new Set(UsersState.users.map((user) => user.room))).filter(
+    (room) => room
+  ); // Filter out any undefined or empty rooms
 };
